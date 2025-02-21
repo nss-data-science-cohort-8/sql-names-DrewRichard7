@@ -194,3 +194,12 @@ FROM names
 GROUP BY year
 ORDER BY n_names ASC
 LIMIT 1;
+
+--how many total males and females are there registered in the dataset? 
+SELECT SUM(num_registered) AS total_males
+FROM names
+WHERE gender = 'M';
+
+SELECT SUM(num_registered) AS total_females
+FROM names
+WHERE gender = 'F'
