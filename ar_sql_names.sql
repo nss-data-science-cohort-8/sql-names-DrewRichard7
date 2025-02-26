@@ -40,8 +40,6 @@ FROM names
 GROUP BY gender;
 -- more males
 
-
-
 -- 8. What are the most popular male and female names overall (i.e., the most total registrations)?
 SELECT name, SUM(num_registered) AS most_popular_male
 FROM names
@@ -49,12 +47,20 @@ WHERE gender = 'M'
 GROUP BY name
 ORDER BY SUM(num_registered) DESC
 LIMIT 1;
+
 SELECT name, SUM(num_registered) AS most_popular_female
 FROM names
 WHERE gender = 'F'
 GROUP BY name
 ORDER BY SUM(num_registered) DESC
 LIMIT 1;
+
+-- alternate
+SELECT DISTINCT ON (gender) name, gender, SUM(num_registered)
+FROM names
+GROUP BY name, gender
+ORDER BY gender, SUM(num_registered) DESC;
+
 
 -- 9. What are the most popular boy and girl names of the first decade of the 2000s (2000 - 2009)?
 -- male
@@ -72,18 +78,26 @@ GROUP BY name
 ORDER BY SUM(num_registered) DESC
 LIMIT 1;
 
+-- alternate
+SELECT DISTINCT ON (gender) name, gender, SUM(num_registered)
+FROM names
+WHERE year BETWEEN 2000 AND 2009
+GROUP BY name, gender
+ORDER BY gender, SUM(num_registered) DESC;
+
+
 -- 10. Which year had the most variety in names (i.e. had the most distinct names)?
-SELECT year AS year_most_variety
+SELECT year, COUNT(DISTINCT(name))
 FROM names
 GROUP BY year
 ORDER BY COUNT(DISTINCT(name)) DESC
 LIMIT 1;
 
 -- 11. What is the most popular name for a girl that starts with the letter X?
-SELECT name as girl_x_name
+SELECT name as girl_x_name, SUM(num_registered), gender
 FROM names
 WHERE (name LIKE 'X%') AND (gender = 'F')
-GROUP BY name
+GROUP BY name, gender
 ORDER BY SUM(num_registered) DESC
 LIMIT 1;
 
@@ -94,7 +108,7 @@ WHERE name LIKE 'Q%' AND name NOT LIKE '_u%'
 GROUP BY name;
 
 -- 13. Which is the more popular spelling between "Stephen" and "Steven"? Use a single query to answer this question.
-SELECT name, COUNT(name)
+SELECT name, SUM(num_registered)
 FROM names
 WHERE name IN ('Stephen', 'Steven')
 GROUP BY name
@@ -103,11 +117,8 @@ ORDER BY SUM(num_registered);
 -- 14. Find all names that are "unisex" - that is all names that have been used both for boys and for girls.
 SELECT name
 FROM names
-WHERE (gender = 'M')
-INTERSECT
-SELECT name
-FROM names
-WHERE (gender = 'F');
+GROUP BY name
+HAVING COUNT(DISTINCT gender) = 2;
 
 -- 15. Find all names that have made an appearance in every single year since 1880.
 SELECT name
