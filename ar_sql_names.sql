@@ -14,9 +14,10 @@ SELECT SUM(num_registered) AS total_people
 FROM names;
 
 -- 3. Which name had the most appearances in a single year in the dataset?
-SELECT *
+SELECT name, SUM(num_registered), year
 FROM names
-ORDER BY num_registered DESC
+GROUP BY name, year
+ORDER BY SUM(num_registered) DESC
 LIMIT 1;
 
 -- 4. What range of years are included?
