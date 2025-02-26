@@ -117,6 +117,16 @@ ORDER BY SUM(num_registered);
 -- 14. Find all names that are "unisex" - that is all names that have been used both for boys and for girls.
 SELECT name
 FROM names
+WHERE (gender = 'M')
+INTERSECT
+SELECT name
+FROM names
+WHERE (gender = 'F')
+ORDER BY name;
+
+-- alternate
+SELECT name
+FROM names
 GROUP BY name
 HAVING COUNT(DISTINCT gender) = 2;
 
@@ -125,13 +135,14 @@ SELECT name
 FROM names
 WHERE year >=1880
 GROUP BY name
-HAVING COUNT(DISTINCT(year)) = (2019 - 1880); 
+HAVING COUNT(DISTINCT(year)) = (SELECT COUNT(DISTINCT year) FROM names); 
 
 -- 16. Find all names that have only appeared in one year.
 SELECT name, COUNT(name)
 FROM names
 GROUP BY name
-HAVING COUNT(year) = 1;
+HAVING COUNT(DISTINCT year) = 1
+ORDER BY name;
 
 -- 17. Find all names that only appeared in the 1950s.
 SELECT name
